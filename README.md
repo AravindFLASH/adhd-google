@@ -36,9 +36,9 @@ Traditional wearable solutions (smartwatches, chest straps) suffer from high aba
 ## 🏗️ System Architecture
 
 ```
-[ Camera Feed (30 FPS) ]
-           │
-           ▼
+                         [ Camera Feed (30 FPS) ]
+                                   │
+                                   ▼
 ┌────────────────────────────────────────────────────────────────────────┐
 │                      PRESAGE SMARTSPECTRA SDK                          │
 │  ├─ rPPG Optical Extractor ────► Pulse Rate, Plethysmogram & HRV (RMSSD)│
