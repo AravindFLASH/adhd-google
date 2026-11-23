@@ -1,0 +1,11 @@
+adhd.json
+adhd.json.txt
+*.key
+*.pem
+.git
+.gitignore
+.dockerignore
+npm-debug.log
+node_modules
+.DS_Store
+Thumbs.db

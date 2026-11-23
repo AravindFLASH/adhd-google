@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FocusPulse | ADHD Bio-Adaptive Co-Pilot</title>
+  <link rel="stylesheet" href="./style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+</head>
+<body>
+
+  <!-- Modern WebGL Canvas Particle & Shader FX Background -->
+  <canvas id="fx-canvas"></canvas>
+  <button id="btn-close-fx-focus" class="fx-focus-close-btn">✕ Exit Focus View</button>
+
+  <!-- Ambient Peripheral Attention Pulse Vignette -->
+  <div id="attention-vignette"></div>
+
+  <!-- Sensory De-escalation Screen Dimmer -->
+  <div id="sensory-dimmer"></div>
+
+  <!-- Main App Header -->
+  <header class="app-header">
+    <div class="logo-section">
+      <div class="logo-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+        </svg>
+      </div>
+      <div>
+        <h1 class="logo-title">FocusPulse</h1>
+      </div>
+      <span class="badge-tag">SmartSpectra Co-Pilot</span>
+    </div>
+
+    <div class="header-controls">
+      <!-- Dynamic State Indicator Pill -->
+      <div id="state-pill" class="state-pill">
+        <span class="dot"></span>
+        <span id="state-pill-text">Balanced Flow</span>
+      </div>
+
+      <!-- Audio Biofeedback Toggle -->
+      <button id="btn-toggle-audio" class="btn-toggle">
+        <span>🔇</span> Audio Biofeedback OFF
+      </button>
+
+      <!-- Optional Smartwatch Pair -->
+      <button id="btn-pair-smartwatch" class="btn-toggle">
+        <span>⌚</span> Pair Smartwatch (Optional)
+      </button>
+
+      <!-- Camera Feed Toggle -->
+      <button id="btn-toggle-camera" class="btn-toggle">
+        <span>📷</span> Enable Camera rPPG
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Dashboard Layout -->
+  <main class="dashboard-grid">
+
+    <!-- LEFT COLUMN: SmartSpectra Sensing Engine & Vitals -->
+    <section>
+      <!-- Camera Viewfinder & Computer Vision Canvas -->
+      <div class="glass-card" style="padding: 0.75rem;">
+        <div class="video-viewfinder">
+          <video id="webcam-video" autoplay playsinline muted></video>
+          <canvas id="overlay-canvas" width="640" height="480"></canvas>
+          <div class="viewfinder-badges">
+            <span id="cam-mode-badge" class="viewfinder-badge">SMARTSPECTRA TELEMETRY STREAM</span>
+            <span id="val-sqi-status" class="viewfinder-badge" style="color: #10b981;">SQI: HIGH</span>
+          </div>
+        </div>
+
+        <!-- Live Physiological Metrics Grid -->
+        <div class="vitals-grid">
+          <div class="vital-item">
+            <span class="vital-label">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" color="#ef4444"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+              Pulse (rPPG)
+            </span>
+            <div class="vital-value-row">
+              <span id="val-pulse-bpm" class="vital-number">72</span>
+              <span class="vital-unit">BPM</span>
+            </div>
+            <span class="vital-status">Target: 60-85</span>
+          </div>
+
+          <div class="vital-item">
+            <span class="vital-label">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              HRV (RMSSD)
+            </span>
+            <div class="vital-value-row">
+              <span id="val-hrv-rmssd" class="vital-number">55</span>
+              <span class="vital-unit">ms</span>
+            </div>
+            <span class="vital-status">Autonomic Vagus</span>
+          </div>
+
+          <div class="vital-item">
+            <span class="vital-label">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+              Stress Index (SI)
+            </span>
+            <div class="vital-value-row">
+              <span id="val-baevsky" class="vital-number">85</span>
+              <span class="vital-unit">Baevsky</span>
+            </div>
+            <span class="vital-status">&lt; 150 Normal</span>
+          </div>
+
+          <div class="vital-item">
+            <span class="vital-label">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2"><path d="M12 2a10 10 0 0 0-10 10c0 4.4 2.8 8.1 6.8 9.4.5.1.7-.2.7-.5v-1.8c-2.8.6-3.4-1.3-3.4-1.3"/></svg>
+              Dual Respiration
+            </span>
+            <div class="vital-value-row">
+              <span id="val-resp-rpm" class="vital-number">14.0</span>
+              <span class="vital-unit">RPM</span>
+            </div>
+            <span id="val-resp-mode" class="vital-status" style="color: #10b981;">DIAPHRAGMATIC</span>
+          </div>
+
+          <div class="vital-item">
+            <span class="vital-label">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#818cf8" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+              Blink Rate
+            </span>
+            <div class="vital-value-row">
+              <span id="val-blink-rate" class="vital-number">15</span>
+              <span class="vital-unit">/min</span>
+            </div>
+            <span class="vital-status">Ocular EAR</span>
+          </div>
+
+          <div class="vital-item">
+            <span class="vital-label">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+              Motion Energy
+            </span>
+            <div class="vital-value-row">
+              <span id="val-motion-energy" class="vital-number">4.0</span>
+              <span class="vital-unit">px/s</span>
+            </div>
+            <span class="vital-status">Landmark Flow</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Real-Time Waveforms -->
+      <div class="glass-card">
+        <div class="card-header">
+          <span class="card-title">
+            <span class="card-title-icon">📈</span> rPPG Plethysmogram Waveform
+          </span>
+          <span style="font-size: 0.72rem; color: #06b6d4;">Forehead Capillary Micro-Flush</span>
+        </div>
+        <canvas id="ppg-canvas" class="waveform-canvas" width="300" height="64"></canvas>
+
+        <div class="card-header" style="margin-top: 1rem;">
+          <span class="card-title">
+            <span class="card-title-icon">🫁</span> Dual-Trace Respiration Waves
+          </span>
+          <span style="font-size: 0.72rem; color: #34d399;">Upper Chest vs Lower Abdomen</span>
+        </div>
+        <canvas id="resp-canvas" class="waveform-canvas" width="300" height="72"></canvas>
+      </div>
+    </section>
+
+    <!-- CENTER COLUMN: Bio-Adaptive Co-Pilot & Interventions -->
+    <section>
+      <!-- State Hero Banner -->
+      <div class="glass-card copilot-hero">
+        <div class="state-banner">
+          <div id="state-icon" class="state-icon-large">🎯</div>
+          <div class="state-info">
+            <h3 id="state-title">Optimal Focus & Equilibrium</h3>
+            <p id="state-description">Autonomic markers balanced in optimal focus equilibrium. SmartSpectra sensing active.</p>
+          </div>
+        </div>
+
+        <!-- INTERVENTION A: Paced Breathing Biofeedback Orb -->
+        <div id="breathing-panel" class="intervention-container" style="display: none;">
+          <div class="breathing-orb-container">
+            <div class="breathing-orb-wrapper">
+              <div class="breathing-halo"></div>
+              <div id="breathing-orb" class="breathing-orb"></div>
+            </div>
+            <div id="breathing-phase-text" class="breathing-phase-text">Inhale</div>
+            <div id="breathing-timer-text" class="breathing-timer-text">Breathe in through your nose (4s)</div>
+          </div>
+          <div style="text-align: center; font-size: 0.78rem; color: #94a3b8;">
+            0.1 Hz Vagal Resonance Biofeedback to de-escalate thoracic hyperventilation
+          </div>
+        </div>
+
+        <!-- INTERVENTION B: Micro-Task Paralysis Buster -->
+        <div id="paralysis-panel" class="intervention-container" style="display: none;">
+          <div class="paralysis-buster">
+            <div class="paralysis-header">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              <span>Task Paralysis Buster (One Micro-Step at a Time)</span>
+            </div>
+            <p style="font-size: 0.82rem; color: #94a3b8;">
+              Your nervous system is in an autonomic freeze spike. We dimmed background clutter. Pick one tiny 2-minute micro-action to break the paralysis:
+            </p>
+
+            <div class="task-input-row">
+              <input type="text" id="task-input" class="task-input" placeholder="What task feels daunting right now?">
+              <button id="btn-chunk-task" class="btn-primary">Chunk Task</button>
+            </div>
+
+            <!-- Quick Presets -->
+            <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
+              <button class="btn-toggle task-preset-btn" data-task="Writing Report / Paper">📝 Writing Report</button>
+              <button class="btn-toggle task-preset-btn" data-task="Inbox / Email Dread">✉️ Inbox Zero Dread</button>
+              <button class="btn-toggle task-preset-btn" data-task="Debugging Complex Bug">💻 Complex Coding Bug</button>
+            </div>
+
+            <!-- Micro Steps List -->
+            <div id="micro-steps-container" class="micro-steps-list">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+        </div>
+
+        <!-- INTERVENTION C: 60-Second Movement Break -->
+        <div id="movement-panel" class="intervention-container" style="display: none;">
+          <div class="movement-reset-panel">
+            <h4 style="color: #10b981; font-size: 1.1rem; font-weight: 700;">Tactile Energy Realignment</h4>
+            <div id="movement-seconds" class="movement-timer">60</div>
+            <p class="movement-prompt">
+              Your motor hyperactivity is spiking. Stand up, shake out your wrists, or do 3 shoulder rolls. Movement is natural; let's channel it into a clean dopamine reset!
+            </p>
+            <button id="btn-skip-movement" class="btn-toggle" style="margin: 0 auto;">Done &amp; Re-centered</button>
+          </div>
+        </div>
+
+        <!-- INTERVENTION D: Clean Flow Workspace (Normal state) -->
+        <div id="flow-panel" class="intervention-container">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
+            <span style="font-size: 0.88rem; font-weight: 600; color: #cbd5e1;">Active Focus Workspace</span>
+            <span id="calibration-status-text" style="font-size: 0.75rem; color: #10b981;">Baseline Calibrated</span>
+          </div>
+          <p style="font-size: 0.83rem; color: #94a3b8; line-height: 1.5;">
+            FocusPulse is running passively in the background. If you drift into a blank zombie stare, experience task paralysis, or shallow breathing, subtle ambient cues will gently guide you back without guilt or shame.
+          </p>
+        </div>
+      </div>
+
+      <!-- 1. Web Audio API Engine Card -->
+      <div class="glass-card">
+        <div class="card-header">
+          <span class="card-title">
+            <span class="card-title-icon">🎧</span> Web Audio Engine (40Hz Gamma &amp; Binaural Beats)
+          </span>
+          <span id="audio-engine-status-badge" class="badge-tag" style="background: rgba(16, 185, 129, 0.2); color: #34d399; border-color: rgba(16, 185, 129, 0.3);">
+            Active 40Hz
+          </span>
+        </div>
+
+        <!-- Mode Pills -->
+        <div style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 0.2rem;">Entrainment Synthesis Mode:</div>
+        <div class="fx-btn-group">
+          <button class="fx-pill-btn active" data-audio-mode="ISOCHRONIC">
+            <span>⚡</span> 40Hz Isochronic Pulse (Speakers/Headphones)
+          </button>
+          <button class="fx-pill-btn" data-audio-mode="BINAURAL">
+            <span>🎧</span> 40Hz Binaural Beats (Stereo Phase)
+          </button>
+          <button class="fx-pill-btn" data-audio-mode="BROWN_NOISE">
+            <span>🌊</span> Brownian Noise (ADHD Masking)
+          </button>
+          <button class="fx-pill-btn" data-audio-mode="HYBRID_FOCUS">
+            <span>✨</span> Hybrid Focus Matrix (Beats + Noise)
+          </button>
+        </div>
+
+        <!-- Carrier Frequency & Neuro Presets -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-top: 0.75rem;">
+          <div>
+            <div style="font-size: 0.72rem; color: #94a3b8;">Carrier Frequency:</div>
+            <div class="fx-btn-group">
+              <button class="fx-pill-btn active" data-carrier="216">216 Hz (Warm)</button>
+              <button class="fx-pill-btn" data-carrier="432">432 Hz (Focus)</button>
+              <button class="fx-pill-btn" data-carrier="528">528 Hz (Calm)</button>
+            </div>
+          </div>
+          <div>
+            <div style="font-size: 0.72rem; color: #94a3b8;">Target Brainwave Frequency:</div>
+            <div class="fx-btn-group">
+              <button class="fx-pill-btn active" data-beat="40">40Hz Gamma (ADHD Focus)</button>
+              <button class="fx-pill-btn" data-beat="14">14Hz SMR (Quiet Motor)</button>
+              <button class="fx-pill-btn" data-beat="10">10Hz Alpha (Relaxed)</button>
+              <button class="fx-pill-btn" data-beat="4">4Hz Theta (Parasympathetic)</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Volume & Spectrum -->
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 0.75rem;">
+          <div style="display: flex; align-items: center; gap: 0.5rem; flex: 1; max-width: 240px;">
+            <span style="font-size: 0.75rem; color: #94a3b8;">Volume:</span>
+            <input type="range" id="audio-volume-slider" class="slider-input" min="0" max="1" step="0.02" value="0.18" style="flex: 1;">
+          </div>
+          <span style="font-size: 0.72rem; color: #06b6d4;">Real-Time FFT Analyser</span>
+        </div>
+        <canvas id="audio-spectrum-canvas" class="audio-spectrum-canvas" width="400" height="52"></canvas>
+      </div>
+
+      <!-- 2. Modern Canvas Particle & Shader FX Card -->
+      <div class="glass-card">
+        <div class="card-header">
+          <span class="card-title">
+            <span class="card-title-icon">✨</span> GPU Particle &amp; Shader FX (Bio-WebGL Canvas)
+          </span>
+          <button id="btn-enter-fx-focus" class="btn-toggle" style="font-size: 0.75rem; padding: 0.3rem 0.7rem;">
+            <span>🔍</span> Focus Meditation View
+          </button>
+        </div>
+        <p style="font-size: 0.8rem; color: #94a3b8; line-height: 1.4;">
+          8,000+ GPU particles rendered via WebGL custom GLSL shaders. Displacements synchronize dynamically with your <strong>cardiac pulse</strong> (rPPG expansion), <strong>respiration wave</strong>, and <strong>40Hz Web Audio spectrum</strong>.
+        </p>
+
+        <!-- Topology Selector -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.6rem;">
+          <div>
+            <div style="font-size: 0.72rem; color: #94a3b8;">Particle Topology:</div>
+            <div class="fx-btn-group">
+              <button class="fx-pill-btn active" data-topology="NEURAL_ORB">
+                <span>🧬</span> Neural Orb (Fibonacci Sphere)
+              </button>
+              <button class="fx-pill-btn" data-topology="VORTEX_SWARM">
+                <span>🌀</span> Vortex Swarm (Dual Torus)
+              </button>
+              <button class="fx-pill-btn" data-topology="QUANTUM_FIELD">
+                <span>🌐</span> Quantum Field (Audio Mesh)
+              </button>
+            </div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 0.2rem; align-items: flex-end;">
+            <span style="font-size: 0.7rem; color: #94a3b8;">Pulse Sensitivity:</span>
+            <input type="range" id="fx-sensitivity-slider" class="slider-input" min="0.5" max="2.5" step="0.1" value="1.0" style="width: 100px;">
+          </div>
+        </div>
+      </div>
+
+      <!-- ADHD Co-Pilot Architecture Explainer Card -->
+      <div class="glass-card">
+        <div class="card-header">
+          <span class="card-title">
+            <span class="card-title-icon">🧠</span> Neuro-Adaptive Signal Mechanics
+          </span>
+          <span class="badge-tag">Zero Wearable Friction</span>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; font-size: 0.8rem; color: #94a3b8;">
+          <div style="background: rgba(15, 23, 42, 0.5); padding: 0.65rem; border-radius: 8px;">
+            <strong style="color: #cbd5e1;">The Fidgeting Paradox:</strong>
+            <p style="margin-top: 0.2rem;">Differentiates productive stimming (motor activity while eyes locked on work) from agitated panic. You are never penalized for natural stimming.</p>
+          </div>
+          <div style="background: rgba(15, 23, 42, 0.5); padding: 0.65rem; border-radius: 8px;">
+            <strong style="color: #cbd5e1;">Rejection Sensitivity (RSD) Guard:</strong>
+            <p style="margin-top: 0.2rem;">Zero loud alarms or punitive alerts. Peripheral light pulses &amp; sub-auditory 40Hz gamma entrainment preserve executive agency.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT COLUMN: Clinical Diagnostics & Scenario Simulator -->
+    <section>
+      <!-- Presage API Readiness -->
+      <div class="glass-card">
+        <div class="card-header">
+          <span class="card-title">
+            <span class="card-title-icon">🛰️</span> Presage API Status
+          </span>
+          <span id="presage-status-badge" class="badge-tag" style="background: rgba(148, 163, 184, 0.18); color: #cbd5e1; border-color: rgba(148, 163, 184, 0.28);">
+            Checking...
+          </span>
+        </div>
+        <p id="presage-status-text" style="font-size: 0.8rem; color: #94a3b8; line-height: 1.4;">
+          Checking server-side Presage configuration.
+        </p>
+        <p id="presage-status-meta" style="margin-top: 0.45rem; font-size: 0.72rem; color: #64748b; line-height: 1.3;"></p>
+      </div>
+
+      <!-- ADHD Diagnostic Indices Gauges -->
+      <div class="glass-card gauge-card">
+        <div class="card-header">
+          <span class="card-title">
+            <span class="card-title-icon">📊</span> ADHD Diagnostic Indices
+          </span>
+          <span style="font-size: 0.72rem; color: #94a3b8;">Real-Time Z-Scores</span>
+        </div>
+
+        <div class="gauge-row">
+          <div class="gauge-labels">
+            <span>Inattention &amp; Mind-Wandering</span>
+            <span id="val-inattention" style="font-weight: 700; color: #06b6d4;">8%</span>
+          </div>
+          <div class="gauge-bar-track">
+            <div id="gauge-inattention" class="gauge-bar-fill" style="width: 8%;"></div>
+          </div>
+        </div>
+
+        <div class="gauge-row">
+          <div class="gauge-labels">
+            <span>Autonomic Overwhelm / Paralysis</span>
+            <span id="val-overwhelm" style="font-weight: 700; color: #f59e0b;">12%</span>
+          </div>
+          <div class="gauge-bar-track">
+            <div id="gauge-overwhelm" class="gauge-bar-fill" style="width: 12%;"></div>
+          </div>
+        </div>
+
+        <div class="gauge-row">
+          <div class="gauge-labels">
+            <span>Motor Restlessness vs Stimming</span>
+            <span id="val-restless" style="font-weight: 700; color: #818cf8;">6%</span>
+          </div>
+          <div class="gauge-bar-track">
+            <div id="gauge-restless" class="gauge-bar-fill" style="width: 6%;"></div>
+          </div>
+        </div>
+
+        <div class="gauge-row">
+          <div class="gauge-labels">
+            <span>Respiratory Distress / Hyperventilation</span>
+            <span id="val-breathing" style="font-weight: 700; color: #38bdf8;">5%</span>
+          </div>
+          <div class="gauge-bar-track">
+            <div id="gauge-breathing" class="gauge-bar-fill" style="width: 5%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Clinical Scenario Switcher (Test The Idea Live!) -->
+      <div class="glass-card">
+        <div class="card-header">
+          <span class="card-title">
+            <span class="card-title-icon">🧪</span> SmartSpectra Scenario Switcher
+          </span>
+          <span style="font-size: 0.7rem; color: #94a3b8;">Simulate Symptoms</span>
+        </div>
+
+        <div class="scenarios-grid">
+          <button class="btn-scenario active" data-scenario="BASELINE_FLOW">
+            <span>🎯</span>
+            <div>
+              <strong>1. Balanced Flow State</strong>
+              <div style="font-size: 0.68rem; color: #94a3b8;">Normal vitals, sustained attention</div>
+            </div>
+            <span class="scenario-badge" style="color: #10b981;">Flow</span>
+          </button>
+
+          <button class="btn-scenario" data-scenario="INATTENTION_STARE">
+            <span>😶‍🌫️</span>
+            <div>
+              <strong>2. Mind-Wandering (Zombie Stare)</strong>
+              <div style="font-size: 0.68rem; color: #94a3b8;">Stare &gt; 8s, blinks &lt; 4/min, gaze drift</div>
+            </div>
+            <span class="scenario-badge" style="color: #06b6d4;">Pulse</span>
+          </button>
+
+          <button class="btn-scenario" data-scenario="OVERWHELM_PARALYSIS">
+            <span>🧊</span>
+            <div>
+              <strong>3. Task Paralysis &amp; Freeze</strong>
+              <div style="font-size: 0.68rem; color: #94a3b8;">HRV collapse (14ms), high stress, freeze</div>
+            </div>
+            <span class="scenario-badge" style="color: #f59e0b;">Chunk</span>
+          </button>
+
+          <button class="btn-scenario" data-scenario="ANXIETY_SHALLOW_BREATHING">
+            <span>🫁</span>
+            <div>
+              <strong>4. Clavicular Hyperventilation</strong>
+              <div style="font-size: 0.68rem; color: #94a3b8;">27 RPM rapid breathing, pulse spike</div>
+            </div>
+            <span class="scenario-badge" style="color: #38bdf8;">Breath</span>
+          </button>
+
+          <button class="btn-scenario" data-scenario="RESTLESSNESS_FIDGET">
+            <span>⚡</span>
+            <div>
+              <strong>5. Agitated Restlessness</strong>
+              <div style="font-size: 0.68rem; color: #94a3b8;">Erratic head motion, gaze lost</div>
+            </div>
+            <span class="scenario-badge" style="color: #f43f5e;">Reset</span>
+          </button>
+
+          <button class="btn-scenario" data-scenario="BURNOUT_EXHAUSTION">
+            <span>🔋</span>
+            <div>
+              <strong>6. Cognitive Burnout</strong>
+              <div style="font-size: 0.68rem; color: #94a3b8;">Low autonomic tone, slow blinks, fatigue</div>
+            </div>
+            <span class="scenario-badge" style="color: #e11d48;">Rest</span>
+          </button>
+        </div>
+
+        <!-- Manual Biometric Stress-Testing Sliders -->
+        <div style="margin-top: 1rem; border-top: 1px solid rgba(148, 163, 184, 0.1); padding-top: 0.75rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+            <span style="font-size: 0.78rem; font-weight: 600; color: #cbd5e1;">Live Biometric Stress-Test</span>
+            <button id="btn-reset-sliders" style="background: none; border: none; color: #6366f1; font-size: 0.7rem; cursor: pointer;">Reset</button>
+          </div>
+
+          <div class="slider-control">
+            <div style="display: flex; justify-content: space-between; font-size: 0.7rem; color: #94a3b8;">
+              <span>Heart Rate (BPM): <strong id="slider-bpm-val" style="color: #fff;">72</strong></span>
+            </div>
+            <input type="range" id="slider-bpm" class="slider-input" min="50" max="130" value="72">
+          </div>
+
+          <div class="slider-control">
+            <div style="display: flex; justify-content: space-between; font-size: 0.7rem; color: #94a3b8;">
+              <span>HRV RMSSD (ms): <strong id="slider-rmssd-val" style="color: #fff;">55</strong></span>
+            </div>
+            <input type="range" id="slider-rmssd" class="slider-input" min="10" max="90" value="55">
+          </div>
+
+          <div class="slider-control">
+            <div style="display: flex; justify-content: space-between; font-size: 0.7rem; color: #94a3b8;">
+              <span>Breathing Rate (RPM): <strong id="slider-rpm-val" style="color: #fff;">14</strong></span>
+            </div>
+            <input type="range" id="slider-rpm" class="slider-input" min="6" max="35" value="14">
+          </div>
+
+          <div class="slider-control">
+            <div style="display: flex; justify-content: space-between; font-size: 0.7rem; color: #94a3b8;">
+              <span>Motion Energy (px/s): <strong id="slider-motion-val" style="color: #fff;">4</strong></span>
+            </div>
+            <input type="range" id="slider-motion" class="slider-input" min="0" max="65" value="4">
+          </div>
+        </div>
+      </div>
+
+      <!-- Real-Time Event & Intervention Timeline -->
+      <div class="glass-card">
+        <div class="card-header">
+          <span class="card-title">
+            <span class="card-title-icon">⏱️</span> Event &amp; Intervention Log
+          </span>
+          <span style="font-size: 0.7rem; color: #94a3b8;">Audited Interventions</span>
+        </div>
+        <div id="timeline-log" class="timeline-log">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script type="module" src="./src/app.js"></script>
+</body>
+</html>

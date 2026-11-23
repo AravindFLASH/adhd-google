@@ -1,0 +1,27 @@
+{
+  "name": "focuspulse-adhd-copilot",
+  "version": "1.0.0",
+  "description": "FocusPulse: ADHD Bio-Adaptive Co-Pilot powered by Presage SmartSpectra SDK",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --check server.js"
+  },
+  "keywords": [
+    "adhd",
+    "smartspectra",
+    "presage",
+    "rppg",
+    "hrv",
+    "biofeedback",
+    "neurodiversity"
+  ],
+  "author": "FocusPulse Team",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "dependencies": {
+    "@smartspectra/node-sdk": "^3.5.0"
+  }
+}
