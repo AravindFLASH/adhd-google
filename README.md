@@ -155,20 +155,20 @@ To deploy FocusPulse to Google Cloud Run using service account credentials:
 
 ```bash
 # 1. Authenticate with Google Cloud Service Account
-gcloud auth activate-service-account --key-file=adhd.json
-gcloud config set project adhd-9999
+gcloud auth activate-service-account --key-file
+gcloud config set project
 
 # 2. Configure Docker authentication for Artifact Registry
 gcloud auth configure-docker us-central1-docker.pkg.dev --quiet
 
 # 3. Build & push Docker image to Artifact Registry
 docker build -t focuspulse:latest .
-docker tag focuspulse:latest us-central1-docker.pkg.dev/adhd-9999/cloud-run-source-deploy/focuspulse:latest
-docker push us-central1-docker.pkg.dev/adhd-9999/cloud-run-source-deploy/focuspulse:latest
+docker tag focuspulse:latest ---------------------------------------------------
+docker push --------------------------------
 
 # 4. Deploy container to Google Cloud Run
 gcloud run deploy focuspulse \
-  --image us-central1-docker.pkg.dev/adhd-9999/cloud-run-source-deploy/focuspulse:latest \
+  --image us-central1-docker.pkg.dev/----------/cloud-run-source-deploy/focuspulse:latest \
   --region us-central1 \
   --platform managed \
   --allow-unauthenticated \
